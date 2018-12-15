@@ -20,12 +20,29 @@ package io.vavr.control;
 
 import org.junit.jupiter.api.Test;
 
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("deprecation")
 class TryTest {
@@ -959,57 +976,6 @@ class TryTest {
     @Test
     void shouldStreamSuccess() {
         assertEquals(Collections.singletonList(SUCCESS_VALUE), SUCCESS.stream().collect(Collectors.toList()));
-    }
-
-    // -- .toEither(Function)
-
-    @Test
-    void shouldConvertFailureToEitherUsingIdentityThrowableMapper() {
-        assertEquals(Either.left(FAILURE_CAUSE), FAILURE.toEither(Function.identity()));
-    }
-
-    @Test
-    void shouldConvertFailureToEitherUsingNonTrivialThrowableMapper() {
-        assertEquals(Either.left(ERROR), FAILURE.toEither(ignored -> ERROR));
-    }
-
-    @Test
-    void shouldConvertSuccessToEither() {
-        assertEquals(Either.right(SUCCESS_VALUE), SUCCESS.toEither(ignored -> { throw ASSERTION_ERROR; }));
-    }
-
-    @Test
-    void shouldThrowNPEWhenConvertingFailureToEitherUsingNullThrowableMapper() {
-        assertEquals(
-                "failureMapper is null",
-                assertThrows(NullPointerException.class, () -> FAILURE.toEither(null)).getMessage()
-        );
-    }
-
-    @Test
-    void shouldThrowNPEWhenConvertingSuccessToEitherUsingNullThrowableMapper() {
-        assertEquals(
-                "failureMapper is null",
-                assertThrows(NullPointerException.class, () -> SUCCESS.toEither(null)).getMessage()
-        );
-    }
-
-    // -- .toOption()
-
-    @Test
-    void shouldConvertFailureToOption() {
-        assertEquals(Option.none(), FAILURE.toOption());
-    }
-
-
-    @Test
-    void shouldConvertSuccessOfNonNullToOption() {
-        assertEquals(Option.some(SUCCESS_VALUE), SUCCESS.toOption());
-    }
-
-    @Test
-    void shouldConvertSuccessOfNullToOption() {
-        assertEquals(Option.some(null), Try.success(null).toOption());
     }
 
     // -- .toOptional()

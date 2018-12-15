@@ -19,7 +19,11 @@
 package io.vavr.control;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -588,28 +592,6 @@ public abstract class Try<T> implements Iterable<T>, Serializable {
      */
     public Stream<T> stream() {
         return isSuccess() ? Stream.of(get()) : Stream.empty();
-    }
-
-    /**
-     * Converts this {@code Try} to an {@link Either}.
-     *
-     * @param <U> the left type of the {@code Either}
-     * @param failureMapper a failure mapper
-     * @return {@code Either.right(get()} if this is a success, otherwise {@code Either.left(failureMapper.apply(getCause())}
-     * @throws NullPointerException if the given {@code failureMapper} is null
-     */
-    public <U> Either<U, T> toEither(Function<? super Throwable, ? extends U> failureMapper) {
-        Objects.requireNonNull(failureMapper, "failureMapper is null");
-        return isSuccess() ? Either.right(get()) : Either.left(failureMapper.apply(getCause()));
-    }
-
-    /**
-     * Converts this {@code Try} to an {@link Option}.
-     *
-     * @return {@code Option.some(get()} if this is a success, otherwise {@code Option.none()}
-     */
-    public Option<T> toOption() {
-        return isSuccess() ? Option.some(get()) : Option.none();
     }
 
     /**
